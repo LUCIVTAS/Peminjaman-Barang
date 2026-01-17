@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "397208020688",
+    "project_id": "peminjamanbarang-70140",
+    "storage_bucket": "peminjamanbarang-70140.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397208020688:android:980024d361120e056ae0d5",
+        "android_client_info": {
+          "package_name": "com.example.peminjamanbarang"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAllZdMiF_YHNupmN1ZGK8wQmcXBv-Mvic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
