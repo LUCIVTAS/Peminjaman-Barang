@@ -6,6 +6,9 @@ gradle-wrapper.jar
 /local.properties
 GeneratedPluginRegistrant.java
 .cxx/
+# Firebase configuration files
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
 
 # Remember to never publicly share your keystore.
 # See https://flutter.dev/to/reference-keystore
