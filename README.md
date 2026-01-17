@@ -1,16 +1,34 @@
-# peminjamanbarang
+# Lab-Track: Sistem Manajemen Peminjaman Barang Laboratorium
 
-A new Flutter project.
+Aplikasi manajemen peminjaman barang laboratorium berbasis **Flutter** dan **Firebase** yang dirancang untuk memudahkan administrasi inventaris secara digital dan real-time. Proyek ini dikembangkan sebagai tugas besar UAS Pemrograman Mobile.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## Fitur Utama
+- **Autentikasi Firebase**: Login aman untuk Admin dan Mahasiswa.
+- **Manajemen Inventaris (CRUD)**: Admin dapat mengelola data barang (Tambah, Edit, Hapus) secara real-time.
+- **Sistem Peminjaman Akurat**: Pencatatan peminjaman dengan validasi waktu (Jam & Menit).
+- **Ekspor Laporan PDF**: Fitur cetak riwayat peminjaman ke dalam format PDF yang rapi untuk arsip.
+- **Status Peminjaman**: Pelacakan status barang (Dipinjam/Tersedia) secara otomatis.
+- **Custom Branding**: Aplikasi sudah dilengkapi dengan ikon kustom "LabTrack".
 
-A few resources to get you started if this is your first Flutter project:
+## Teknologi & Library
+- **Framework**: Flutter
+- **Database**: Cloud Firestore (NoSQL)
+- **Auth**: Firebase Authentication
+- **Library Penting**:
+  - `pdf` & `printing`: Untuk generate laporan PDF.
+  - `intl`: Untuk format tanggal dan waktu Indonesia.
+  - `flutter_launcher_icons`: Untuk manajemen ikon aplikasi.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Download Aplikasi (APK)
+Anda dapat mengunduh file instalasi aplikasi yang sudah siap pakai (APK) melalui halaman **Releases** di repository ini:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+**[Download LabTrack APK Terbaru](https://github.com/LUCIVTAS/Peminjaman-Barang/releases)**
+
+*(Pilih file `.apk` pada bagian Assets di versi rilis terbaru).*
+
+## Cara Menjalankan dari Source Code
+1. Clone repository ini:
+   ```bash
+   git clone [https://github.com/LUCIVTAS/Peminjaman-Barang.git](https://github.com/LUCIVTAS/Peminjaman-Barang.git)

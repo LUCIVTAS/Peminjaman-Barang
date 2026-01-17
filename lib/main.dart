@@ -4,12 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 // Import menggunakan Full Package Name sesuai pubspec.yaml
-import 'package:peminjamanbarang/firebase_options.dart';
-import 'package:peminjamanbarang/services/auth_service.dart';
-import 'package:peminjamanbarang/ui/auth/login_screen.dart';
-import 'package:peminjamanbarang/ui/user/user_dashboard.dart';
-import 'package:peminjamanbarang/ui/admin/admin_dashboard.dart';
-
+import 'package:labtrack/firebase_options.dart';
+import 'package:labtrack/services/auth_service.dart';
+import 'package:labtrack/ui/auth/login_screen.dart';
+import 'package:labtrack/ui/user/user_dashboard.dart';
+import 'package:labtrack/ui/admin/admin_dashboard.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
