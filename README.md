@@ -26,8 +26,6 @@ Anda dapat mengunduh file instalasi aplikasi yang sudah siap pakai (APK) melalui
 
 **[Download LabTrack APK Terbaru](https://github.com/LUCIVTAS/Peminjaman-Barang/releases)**
 
-*(Pilih file `.apk` pada bagian Assets di versi rilis terbaru).*
-
 ## Cara Menjalankan dari Source Code
 1. Clone repository ini:
    ```bash
