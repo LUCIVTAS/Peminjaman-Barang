@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../services/auth_service.dart';
 import '../../services/pdf_service.dart';
+// Import helper pengirim notifikasi
+import '../../services/notification_sender.dart'; 
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -138,8 +140,14 @@ class AdminRequestPage extends StatelessWidget {
                 isThreeLine: true,
                 trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                   if (status == 'Pending') ...[
-                    IconButton(icon: const Icon(Icons.check_circle, color: Colors.green), onPressed: () => _handleAction(context, doc.id, 'Approved', null, 0)),
-                    IconButton(icon: const Icon(Icons.cancel, color: Colors.red), onPressed: () => _handleAction(context, doc.id, 'Rejected', loan['itemId'], loan['quantity'])),
+                    IconButton(
+                      icon: const Icon(Icons.check_circle, color: Colors.green), 
+                      onPressed: () => _handleAction(context, doc.id, 'Approved', loan['itemName'], loan['itemId'], 0)
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.cancel, color: Colors.red), 
+                      onPressed: () => _handleAction(context, doc.id, 'Rejected', loan['itemName'], loan['itemId'], loan['quantity'])
+                    ),
                   ],
                   IconButton(icon: const Icon(Icons.delete_sweep, color: Colors.redAccent), onPressed: () => _delete(context, doc.id)),
                 ]),
@@ -151,13 +159,26 @@ class AdminRequestPage extends StatelessWidget {
     );
   }
 
-  // Sisa fungsi (handleAction, delete, dialog, dll) tetap sama
-  void _handleAction(BuildContext context, String docId, String status, String? itemId, int qty) async {
-    await FirebaseFirestore.instance.collection('loans').doc(docId).update({'status': status});
-    if (status == 'Rejected' && itemId != null) {
-      await FirebaseFirestore.instance.collection('items').doc(itemId).update({'stok': FieldValue.increment(qty)});
+  void _handleAction(BuildContext context, String docId, String status, String itemName, String? itemId, int qty) async {
+    try {
+      await FirebaseFirestore.instance.collection('loans').doc(docId).update({'status': status});
+      
+      if (status == 'Rejected' && itemId != null) {
+        await FirebaseFirestore.instance.collection('items').doc(itemId).update({'stok': FieldValue.increment(qty)});
+      }
+
+      // --- TAMBAHAN: KIRIM NOTIFIKASI KE USER ---
+      String statusText = status == 'Approved' ? 'DISETUJUI' : 'DITOLAK';
+      await NotificationSender.sendNotification(
+        toTopic: 'user_notif',
+        title: 'Update Peminjaman',
+        body: 'Permintaan pinjam $itemName Anda telah $statusText oleh Admin.',
+      );
+
+      _showAdminNotify(context, "Status diperbarui & Notifikasi dikirim", false);
+    } catch (e) {
+      _showAdminNotify(context, "Gagal memperbarui status: $e", true);
     }
-    _showAdminNotify(context, "Status diperbarui", false);
   }
 
   void _delete(BuildContext context, String id) async {

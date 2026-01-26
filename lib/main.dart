@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_messaging/firebase_messaging.dart'; // Tambahan untuk FCM
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 // Import menggunakan Full Package Name sesuai pubspec.yaml
 import 'package:labtrack/firebase_options.dart';
@@ -28,13 +28,25 @@ void main() async {
   // Set handler untuk notifikasi saat aplikasi ditutup/background
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // Meminta izin notifikasi kepada user (Penting untuk Android 13+ & iOS)
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
+// Tambahkan baris ini
+FirebaseMessaging messaging = FirebaseMessaging.instance; 
+
+await messaging.requestPermission(
+  alert: true,
+  badge: true,
+  sound: true,
+);
+
+  // --- TAMBAHAN: Subscribe ke Topik agar bisa menerima notifikasi grup ---
+  // Perangkat ini akan mendengarkan notifikasi yang dikirim ke 'admin_notif' dan 'user_notif'
+  await messaging.subscribeToTopic('admin_notif');
+  await messaging.subscribeToTopic('user_notif');
+
+  // --- TAMBAHAN: Listener saat aplikasi sedang DIBUKA (Foreground) ---
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Pesan diterima saat aplikasi terbuka: ${message.notification?.title}');
+    // Di sini Anda bisa menambahkan showDialog atau SnackBar jika ingin memberi tahu user secara visual
+  });
   
   runApp(const MyApp());
 }

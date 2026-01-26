@@ -9,7 +9,7 @@ GeneratedPluginRegistrant.java
 # Firebase configuration files
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
-
+lib/assets/service-account.json
 # Remember to never publicly share your keystore.
 # See https://flutter.dev/to/reference-keystore
 key.properties

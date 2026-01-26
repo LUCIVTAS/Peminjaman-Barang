@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../services/auth_service.dart';
+// Import helper pengirim notifikasi
+import '../../services/notification_sender.dart'; 
 
 class UserDashboard extends StatefulWidget {
   const UserDashboard({super.key});
@@ -50,7 +52,6 @@ void _showUserNotify(BuildContext context, String message, bool isError) {
   );
 }
 
-// FORMAT TANGGAL + JAM (Jika jam 00:00, kita bisa anggap tidak diisi)
 String formatTglUser(dynamic data) {
   if (data == null) return "-";
   if (data is Timestamp) {
@@ -100,8 +101,8 @@ class UserHome extends StatelessWidget {
   void _showLoanDialog(BuildContext context, DocumentSnapshot itemDoc) {
     final qtyController = TextEditingController(text: "1");
     DateTimeRange? range;
-    TimeOfDay? startTime; // Opsional
-    TimeOfDay? endTime;   // Opsional
+    TimeOfDay? startTime;
+    TimeOfDay? endTime;
 
     showDialog(
       context: context,
@@ -112,8 +113,6 @@ class UserHome extends StatelessWidget {
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               TextField(controller: qtyController, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "Jumlah Unit")),
               const SizedBox(height: 15),
-              
-              // PILIH TANGGAL (WAJIB)
               ListTile(
                 title: Text(range == null ? "Pilih Tanggal (Wajib)" : "Tanggal: ${range!.start.day}/${range!.start.month} - ${range!.end.day}/${range!.end.month}"),
                 trailing: const Icon(Icons.calendar_month),
@@ -122,8 +121,6 @@ class UserHome extends StatelessWidget {
                   if (picked != null) setState(() => range = picked);
                 },
               ),
-
-              // PILIH JAM MULAI (OPSIONAL)
               ListTile(
                 title: Text(startTime == null ? "Jam Mulai (Opsional)" : "Mulai: ${startTime!.format(context)}"),
                 trailing: const Icon(Icons.access_time),
@@ -132,8 +129,6 @@ class UserHome extends StatelessWidget {
                   if (picked != null) setState(() => startTime = picked);
                 },
               ),
-
-              // PILIH JAM SELESAI (OPSIONAL)
               ListTile(
                 title: Text(endTime == null ? "Jam Selesai (Opsional)" : "Selesai: ${endTime!.format(context)}"),
                 trailing: const Icon(Icons.access_time),
@@ -155,7 +150,6 @@ class UserHome extends StatelessWidget {
                 final user = FirebaseAuth.instance.currentUser;
                 int qty = int.parse(qtyController.text);
 
-                // LOGIKA PENGGABUNGAN TANGGAL DAN JAM
                 DateTime startFinal = DateTime(range!.start.year, range!.start.month, range!.start.day, startTime?.hour ?? 0, startTime?.minute ?? 0);
                 DateTime endFinal = DateTime(range!.end.year, range!.end.month, range!.end.day, endTime?.hour ?? 23, endTime?.minute ?? 59);
 
@@ -171,6 +165,14 @@ class UserHome extends StatelessWidget {
                   'requestDate': FieldValue.serverTimestamp(),
                 });
                 await itemDoc.reference.update({'stok': FieldValue.increment(-qty)});
+                
+                // --- TAMBAHAN: KIRIM NOTIFIKASI KE ADMIN ---
+                await NotificationSender.sendNotification(
+                  toTopic: 'admin_notif',
+                  title: 'Permintaan Pinjam Baru',
+                  body: '${user.email} ingin meminjam ${itemDoc['nama']}.',
+                );
+
                 Navigator.pop(context);
                 _showUserNotify(context, "Permintaan berhasil dikirim!", false);
               } catch (e) {
@@ -270,8 +272,17 @@ class UserLoanStatus extends StatelessWidget {
 
   void _returnItem(BuildContext context, String loanId, String itemId, int qty, String name) async {
     try {
+      final user = FirebaseAuth.instance.currentUser;
       await FirebaseFirestore.instance.collection('loans').doc(loanId).update({'status': 'Returned'});
       await FirebaseFirestore.instance.collection('items').doc(itemId).update({'stok': FieldValue.increment(qty)});
+      
+      // --- TAMBAHAN: KIRIM NOTIFIKASI KE ADMIN ---
+      await NotificationSender.sendNotification(
+        toTopic: 'admin_notif',
+        title: 'Barang Dikembalikan',
+        body: '${user?.email} telah mengembalikan $name ($qty unit).',
+      );
+
       _showUserNotify(context, "$name berhasil dikembalikan!", false);
     } catch (e) {
       _showUserNotify(context, "Gagal mengembalikan $name", true);
